@@ -1,6 +1,7 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
@@ -195,6 +196,25 @@ class TimeSlotTest {
     t = this.betweenHours(1, 7);
     t1 = this.betweenHours(1, 7);
     assertEquals(0, t.subtract(t1).size());
+  }
+
+  @Test
+  void intersect() {
+    TimeSlot t = this.betweenHours(1, 5);
+    TimeSlot t1 = this.betweenHours(2, 7);
+    TimeSlot intersection = t.intersect(t1);
+    assertTrue(intersection.equals(this.betweenHours(2, 5)));
+    t = this.betweenHours(1, 7);
+    t1 = this.betweenHours(1, 7);
+    assertTrue(t.intersect(t1).equals(t));
+    t = this.betweenHours(1, 5);
+    t1 = this.betweenHours(4, 7);
+    TimeSlot t2 = this.betweenHours(0, 3);
+    assertNull(t.intersect(t1, t2));
+    t = this.betweenHours(0, 7);
+    t1 =this.betweenHours(3, 5);
+    t2 = this.betweenHours(4, 6);
+    assertTrue(t.intersect(t1, t2).equals(this.betweenHours(4, 5)));
   }
 
   private TimeSlot betweenHours(int h1, int h2) {

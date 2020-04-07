@@ -457,4 +457,41 @@ public final class TimeSlot {
   public List<TimeSlot> subtract(TimeSlot... others) {
     return this.subtract(Arrays.asList(others));
   }
+
+  /**
+   * Returns the intersection of this and a list of time slots. Can return null if there is no intersect.
+   * If this is A, and the others are B, C, ... n then this is equivalent to A intersect B intersect C ... intersect n.
+   *
+   * @param others the other time slots to check for intersection
+   * @return a TimeSlot that represents the intersection of this and all others, or null if there is no intersect
+   */
+  public TimeSlot intersect(List<TimeSlot> others) {
+    if (others.size() == 0) {
+      return null;
+    }
+    return intersectHelper(new ArrayList<>(others));
+  }
+
+  private TimeSlot intersectHelper(List<TimeSlot> others) {
+    if (others.size() == 0) {
+      return this;
+    }
+    TimeSlot firstOverlap = others.remove(0);
+    switch (this.checkOverlap(firstOverlap)) {
+      case STARTS_BEFORE_ENDS_WITHIN:
+        return TimeSlot.of(firstOverlap.start, this.end).intersectHelper(others);
+      case STARTS_WITHIN_ENDS_AFTER:
+        return TimeSlot.of(this.start, firstOverlap.end).intersectHelper(others);
+      case CONTAINS:
+        return firstOverlap.intersectHelper(others);
+      case NO_OVERLAP:
+        return null;
+      default:
+        return this.intersectHelper(others);
+    }
+  }
+
+  public TimeSlot intersect(TimeSlot ...others) {
+    return this.intersect(Arrays.asList(others));
+  }
 }
