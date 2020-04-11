@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * TimeSlot represents a period of time with a defined start and end. TimeSlots are immutable.
- * This is a helper class written for personal use and carries no guarantees or restrictions.
+ * TimeSlot represents a single continuous set of time. TimeSlots are immutable.
  *
  * Lucas Gauk - 2020
  */
@@ -411,7 +410,7 @@ public final class TimeSlot {
    * @param others the other time slots to check against this
    * @return the list of all others that overlap this
    */
-  private List<TimeSlot> overlapsWith(List<TimeSlot> others) {
+  List<TimeSlot> overlapsWith(List<TimeSlot> others) {
     return others.stream().filter(other -> other.overlaps(this)).collect(Collectors.toList());
   }
 
@@ -420,7 +419,7 @@ public final class TimeSlot {
    * that is not overlapped by any of the others.
    *
    * Say this is A and B represents the sum of all others. Then this operation would be
-   * equivalent to: A NOT B.
+   * equivalent to: A NOT B. Or, A intersect B complement.
    *
    * @param others the other time slots to remove from this
    * @return a list of time slots that represent the pieces of this that are not overlapped by any of the others
@@ -493,5 +492,14 @@ public final class TimeSlot {
 
   public TimeSlot intersect(TimeSlot ...others) {
     return this.intersect(Arrays.asList(others));
+  }
+
+  public static TimeSlot intersection(List<TimeSlot> timeSlots) {
+    if (timeSlots.size() < 2) {
+      return null;
+    }
+    timeSlots = new ArrayList<>(timeSlots);
+    TimeSlot firstSlot = timeSlots.remove(0);
+    return firstSlot.intersect(timeSlots);
   }
 }

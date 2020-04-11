@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -203,6 +202,8 @@ class TimeSlotTest {
     TimeSlot t = this.betweenHours(1, 5);
     TimeSlot t1 = this.betweenHours(2, 7);
     TimeSlot intersection = t.intersect(t1);
+    assertTrue(intersection.equals(this.betweenHours(2, 5)));
+    intersection = TimeSlot.intersection(Arrays.asList(t, t1));
     assertTrue(intersection.equals(this.betweenHours(2, 5)));
     t = this.betweenHours(1, 7);
     t1 = this.betweenHours(1, 7);
