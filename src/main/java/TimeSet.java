@@ -1,3 +1,4 @@
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,6 +35,16 @@ public class TimeSet {
    */
   public static TimeSet of(TimeSlot timeSlot) {
     return TimeSet.of(Collections.singletonList(timeSlot));
+  }
+
+  /**
+   * Clone a time set.
+   *
+   * @param timeSet the time set to clone
+   * @return a new time set with the same time slots
+   */
+  public static TimeSet of(TimeSet timeSet) {
+    return TimeSet.of(timeSet.timeSlots);
   }
 
   /**
@@ -74,6 +85,17 @@ public class TimeSet {
    */
   public List<TimeSlot> getTimeSlots() {
     return new ArrayList<>(this.timeSlots);
+  }
+
+  /**
+   * Return the length of this time set in a specified unit.
+   * The unit must be supported by LocalDateTime.
+   *
+   * @param unit the unit to return
+   * @return the number of units in this time set
+   */
+  public long length(ChronoUnit unit) {
+    return this.timeSlots.stream().map(timeSlot -> timeSlot.length(unit)).reduce(Long::sum).orElse((long) 0);
   }
 
   /**
@@ -191,7 +213,7 @@ public class TimeSet {
    * @param timeSets time sets to intersect
    * @return the time set that represents the intersection of the other time sets
    */
-  public TimeSet intersection(List<TimeSet> timeSets) {
+  public static TimeSet intersection(List<TimeSet> timeSets) {
     if (timeSets.size() < 2) {
       return TimeSet.empty();
     }
